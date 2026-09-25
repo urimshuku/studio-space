@@ -60,7 +60,7 @@ const DEFAULT_CATEGORIES: Category[] = [
     description:
       'Structural renovations to keep Studio Space open: repairing the roof, replacing windows, insulating the walls, restoring the unused 8 m² area, and rebuilding the bathroom.',
     target_amount: RENOVATIONS_TARGET,
-    current_amount: 500,
+    current_amount: 1500,
     sort_order: 0,
     has_progress_bar: true,
     created_at: new Date().toISOString(),

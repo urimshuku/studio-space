@@ -27,14 +27,40 @@ function formatRelativeTime(isoDate: string): string {
   return `${diffY} ${diffY === 1 ? 'year' : 'years'} ago`;
 }
 
+const ONE_MONTH_AGO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
 const FALLBACK_DONATIONS: Donation[] = [
+  {
+    id: 'fallback-ardian-batusha',
+    category_id: '',
+    donor_name: 'Ardian Batusha',
+    amount: 800,
+    is_anonymous: false,
+    created_at: ONE_MONTH_AGO,
+  },
+  {
+    id: 'fallback-xhevat-kastrati',
+    category_id: '',
+    donor_name: 'Xhevat Kastrati',
+    amount: 100,
+    is_anonymous: false,
+    created_at: ONE_MONTH_AGO,
+  },
+  {
+    id: 'fallback-elona-edonisi',
+    category_id: '',
+    donor_name: 'Elona dhe Edonisi',
+    amount: 100,
+    is_anonymous: false,
+    created_at: ONE_MONTH_AGO,
+  },
   {
     id: 'fallback-1',
     category_id: '',
     donor_name: 'Anonymous',
     amount: 500,
     is_anonymous: true,
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+    created_at: ONE_MONTH_AGO,
   },
 ];
 
