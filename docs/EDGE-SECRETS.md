@@ -16,7 +16,10 @@ supabase secrets list   # names only; values are hashed
 | `RESEND_API_KEY` | Sending email + Resend Contacts |
 | `BOOKING_ADMIN_EMAIL` | Booking / join notifications |
 | `BOOKING_FROM_EMAIL` | Optional “From” address |
-| `PAYSERA_*` | Donation checkout (if used) |
+| `PAYSERA_*` | Bank-transfer donation checkout (if used) |
+| `PAYPAL_CLIENT_ID` | PayPal Checkout (public client id) |
+| `PAYPAL_CLIENT_SECRET` | PayPal Checkout (server only) |
+| `PAYPAL_MODE` | `live` (default) or `sandbox` |
 
 ## `PUBLIC_APP_URL` (email footers)
 
@@ -32,5 +35,5 @@ The frontend only needs `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (see ro
 Redeploy affected functions so new invocations pick up env (or rely on platform refresh; redeploy is the safe default):
 
 ```bash
-supabase functions deploy book-venue join-activity paysera-pay-url paysera-callback unsubscribe-user email-preferences approve-booking track-open track-click newsletter-signup
+supabase functions deploy book-venue join-activity paysera-pay-url paysera-callback paypal-config paypal-create-order paypal-capture-order unsubscribe-user email-preferences approve-booking track-open track-click newsletter-signup
 ```

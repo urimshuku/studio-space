@@ -11,6 +11,7 @@
  */
 import { createClient } from "npm:@supabase/supabase-js@2";
 import md5 from "npm:md5@2.3.0";
+import { recordConfirmedDonation } from "../_shared/recordDonation.ts";
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -74,7 +75,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const amountEur = Number(pending.amount);
-    const { error: insertError } = await supabase.from("donations").insert({
+    await recordConfirmedDonation(supabase, {
       category_id: pending.category_id,
       donor_name: pending.donor_name,
       amount: amountEur,
@@ -82,25 +83,6 @@ Deno.serve(async (req: Request) => {
       words_of_support: pending.words_of_support || undefined,
       email: pending.email || undefined,
     });
-
-    if (insertError) {
-      console.error("Failed to insert Paysera donation:", insertError);
-      return new Response("OK", { status: 200, headers: { "Content-Type": "text/plain" } });
-    }
-
-    const { data: category } = await supabase
-      .from("categories")
-      .select("current_amount")
-      .eq("id", pending.category_id)
-      .single();
-
-    if (category) {
-      const newAmount = Number(category.current_amount) + amountEur;
-      await supabase
-        .from("categories")
-        .update({ current_amount: newAmount, updated_at: new Date().toISOString() })
-        .eq("id", pending.category_id);
-    }
 
     await supabase.from("pending_paysera_donations").delete().eq("order_id", orderid);
 

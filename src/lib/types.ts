@@ -47,6 +47,7 @@ export interface Database {
           amount: number;
           is_anonymous: boolean;
           words_of_support: string | null;
+          paypal_order_id?: string | null;
           created_at: string;
         };
         Insert: {
@@ -56,6 +57,7 @@ export interface Database {
           amount: number;
           is_anonymous?: boolean;
           words_of_support?: string | null;
+          paypal_order_id?: string | null;
           created_at?: string;
         };
         Update: {
@@ -65,6 +67,7 @@ export interface Database {
           amount?: number;
           is_anonymous?: boolean;
           words_of_support?: string | null;
+          paypal_order_id?: string | null;
           created_at?: string;
         };
       };

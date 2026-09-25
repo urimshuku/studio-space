@@ -80,7 +80,7 @@ function getPageFromPathname(): Page {
     pathname === baseFull + '/' ||
     (baseFull === '/' && pathname === '/');
   const isSuccessPath = pathname.endsWith('success') || pathname.includes('/success');
-  if (isSuccessPath && params.get('paysera')) return 'success';
+  if (isSuccessPath && (params.get('paysera') || params.get('paypal'))) return 'success';
   if (pathname.endsWith('cancel') || pathname.includes('/cancel')) return 'cancel';
 
   if (segments[0] === 'unsubscribe' || pathRel.includes('/unsubscribe')) return 'unsubscribe';
@@ -325,7 +325,7 @@ function App() {
   };
 
   const handlePaymentSuccess = () => {
-    window.history.pushState({}, '', buildAppPath('/success?paysera=1'));
+    window.history.pushState({}, '', buildAppPath('/success?paypal=1'));
     setCurrentPage('success');
   };
 

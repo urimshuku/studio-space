@@ -27,7 +27,12 @@ function formatRelativeTime(isoDate: string): string {
   return `${diffY} ${diffY === 1 ? 'year' : 'years'} ago`;
 }
 
-const ONE_MONTH_AGO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+const FALLBACK_CREATED_AT = {
+  ardian: '2026-08-25T18:10:58.000Z',
+  xhevat: '2026-08-25T18:10:57.000Z',
+  elona: '2026-08-25T18:10:56.000Z',
+  anonymous: '2026-07-24T19:57:45.988Z',
+} as const;
 
 const FALLBACK_DONATIONS: Donation[] = [
   {
@@ -36,7 +41,7 @@ const FALLBACK_DONATIONS: Donation[] = [
     donor_name: 'Ardian Batusha',
     amount: 800,
     is_anonymous: false,
-    created_at: ONE_MONTH_AGO,
+    created_at: FALLBACK_CREATED_AT.ardian,
   },
   {
     id: 'fallback-xhevat-kastrati',
@@ -44,7 +49,7 @@ const FALLBACK_DONATIONS: Donation[] = [
     donor_name: 'Xhevat Kastrati',
     amount: 100,
     is_anonymous: false,
-    created_at: ONE_MONTH_AGO,
+    created_at: FALLBACK_CREATED_AT.xhevat,
   },
   {
     id: 'fallback-elona-edonisi',
@@ -52,7 +57,7 @@ const FALLBACK_DONATIONS: Donation[] = [
     donor_name: 'Elona dhe Edonisi',
     amount: 100,
     is_anonymous: false,
-    created_at: ONE_MONTH_AGO,
+    created_at: FALLBACK_CREATED_AT.elona,
   },
   {
     id: 'fallback-1',
@@ -60,7 +65,7 @@ const FALLBACK_DONATIONS: Donation[] = [
     donor_name: 'Anonymous',
     amount: 500,
     is_anonymous: true,
-    created_at: ONE_MONTH_AGO,
+    created_at: FALLBACK_CREATED_AT.anonymous,
   },
 ];
 

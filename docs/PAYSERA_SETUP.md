@@ -1,6 +1,8 @@
-# Paysera donation checkout
+# Paysera donation checkout (bank transfer)
 
-This app uses **Paysera** as the only payment gateway for one-time donations. Users enter amount, name, and email on your site and are redirected to Paysera’s hosted payment page to complete payment. No card or bank details are stored by the app.
+**Paysera** is the bank-transfer path: the donation form shows the Paysera account IBAN. PayPal and card go through PayPal Checkout — see `docs/PAYPAL_SETUP.md`.
+
+Users enter amount, name, and email on the site and can pay with PayPal or card, or transfer to the Paysera IBAN listed on the form. No card or bank details are stored by the app.
 
 ---
 
@@ -27,12 +29,11 @@ Set these in **Supabase Dashboard** → **Project Settings** → **Edge Function
 
 ## Flow
 
-1. User selects or enters amount, name, email, and optional words of support on the donation form.
-2. User clicks **Continue to payment** → frontend calls **paysera-pay-url** with donation data and return URLs.
-3. Backend creates a pending record, builds signed Paysera params (no billing address unless Paysera enforces it), returns redirect URL.
-4. User is redirected to Paysera’s hosted page to pay.
-5. **Success:** Paysera redirects to `/success?paysera=1`. Paysera calls **paysera-callback** (GET with `data` + `ss1`); we verify the signature, then move the pending donation to **donations** and return `OK`.
-6. **Cancel/failure:** Paysera redirects to `/cancel`; user sees the cancel page and can go back home.
+1. The donation form shows two Paysera bank options: **Kosovo** (`XK…` IBAN) and **International** (`LT…` IBAN), with recipient, IBAN, and SWIFT/BIC.
+2. The donor transfers to the matching IBAN (typically with their name as the payment reference).
+3. Studio Space records the gift on the donors list after the transfer arrives.
+
+Hosted Paysera checkout (`paysera-pay-url` / `paysera-callback`) is still in the repo but is not used by the donation form.
 
 ---
 
@@ -71,7 +72,7 @@ Exact URLs this app sends:
 
 Also enable **Allow test payments** in the project, and set Edge secret `PAYSERA_TEST=true` while Paysera reviews. After go-live, set `PAYSERA_TEST=false`.
 
-Do **not** use Paysera’s donation-button HTML generator for this site; checkout is already custom (`PaymentGateway` → `paysera-pay-url`).
+Do **not** use Paysera’s donation-button HTML generator for this site; the form shows the Paysera IBAN in a bank-transfer section.
 
 ---
 
