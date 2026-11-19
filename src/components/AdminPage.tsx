@@ -189,8 +189,12 @@ export function AdminPage({ onHome }: AdminPageProps) {
       return;
     }
     const parsedAmount = Number(amount);
-    if (!categoryId || !Number.isFinite(parsedAmount) || parsedAmount <= 0) {
-      setSaveError('Choose a category and enter an amount greater than zero.');
+    if (!categoryId) {
+      setSaveError('Renovations is not available yet.');
+      return;
+    }
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      setSaveError('Enter an amount greater than zero.');
       return;
     }
     if (!isAnonymous && !donorName.trim()) {
@@ -314,22 +318,13 @@ export function AdminPage({ onHome }: AdminPageProps) {
                 </button>
               </div>
               <div>
-                <label htmlFor="admin-category" className="block text-sm font-semibold text-gray-700 mb-1">
-                  Category
-                </label>
-                <select
-                  id="admin-category"
-                  value={categoryId}
-                  onChange={(event) => setCategoryId(event.target.value)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white"
+                <p className="block text-sm font-semibold text-gray-700 mb-1">Category</p>
+                <p
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                   style={{ fontSize: '16px' }}
                 >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+                  Renovations
+                </p>
               </div>
               <div>
                 <label htmlFor="admin-amount" className="block text-sm font-semibold text-gray-700 mb-1">
