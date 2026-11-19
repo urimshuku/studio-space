@@ -12,6 +12,7 @@ const TOP_LEVEL_APP_SEGMENTS = new Set([
   'privacy-policy',
   'cookie-policy',
   'terms-of-service',
+  'admin',
 ]);
 
 /** Compute the effective base path at runtime (handles GitHub Pages subfolder deployments). */

@@ -19,6 +19,7 @@ import { ImageCarousel } from './components/ImageCarousel';
 import { ScrollReveal } from './components/ScrollReveal';
 import { Footer } from './components/Footer';
 import { LegalPage } from './components/LegalPage';
+import { AdminPage } from './components/AdminPage';
 import { supabase } from './lib/supabase';
 import { buildAppPath, getBaseFull, pathRelativeToBase } from './lib/routes';
 import type { Category } from './lib/types';
@@ -37,7 +38,8 @@ type Page =
   | 'email-preferences'
   | 'privacy-policy'
   | 'cookie-policy'
-  | 'terms-of-service';
+  | 'terms-of-service'
+  | 'admin';
 
 // Old cause categories that are archived and must never be shown,
 // even if the database has not been migrated yet.
@@ -87,6 +89,7 @@ function getPageFromPathname(): Page {
   if (segments[0] === 'email-preferences' || pathRel.includes('/email-preferences')) {
     return 'email-preferences';
   }
+  if (segments[0] === 'admin') return 'admin';
   if (segments[0] === 'privacy-policy') return 'privacy-policy';
   if (segments[0] === 'cookie-policy') return 'cookie-policy';
   if (segments[0] === 'terms-of-service') return 'terms-of-service';
@@ -132,7 +135,8 @@ function skipInitialLoadingForStaticPages(): boolean {
     p === 'email-preferences' ||
     p === 'privacy-policy' ||
     p === 'cookie-policy' ||
-    p === 'terms-of-service'
+    p === 'terms-of-service' ||
+    p === 'admin'
   );
 }
 
@@ -391,6 +395,10 @@ function App() {
         <Footer />
       </div>
     );
+  }
+
+  if (currentPage === 'admin') {
+    return <AdminPage onHome={handleBackToEntry} />;
   }
 
   if (currentPage === 'unsubscribe') {

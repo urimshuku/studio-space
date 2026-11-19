@@ -15,6 +15,8 @@ interface PaymentGatewayProps {
 
 const PRESET_AMOUNTS = [20, 50, 100, 500];
 const MAX_WORDS_OF_SUPPORT = 150;
+/** PayPal and Ko-fi stay in the code. Set this to true to show them again. */
+const SHOW_ONLINE_DONATION_CHECKOUT = false;
 
 const BANK_TRANSFER_OPTIONS = {
   kosovo: {
@@ -35,6 +37,11 @@ function formatIban(iban: string): string {
   const compact = iban.replace(/\s+/g, '').toUpperCase();
   if (!compact) return '';
   return compact.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function kofiEmbedUrl(pageUrl: string): string {
+  const base = pageUrl.replace(/\/$/, '');
+  return `${base}/?hidefeed=true&widget=true&embed=true`;
 }
 
 /** Basic email validation */
@@ -62,6 +69,8 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
   const cardFieldsRef = useRef<PaypalCardFields | null>(null);
   const onSuccessRef = useRef(onSuccess);
   onSuccessRef.current = onSuccess;
+  const [kofiPayUrl, setKofiPayUrl] = useState<string | null>(null);
+  const [kofiLoading, setKofiLoading] = useState(false);
   const [bankRegion, setBankRegion] = useState<'kosovo' | 'international'>('kosovo');
 
   const amount = (selectedAmount ?? parseFloat(customAmount)) || 0;
@@ -109,6 +118,22 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
     };
   }, [paypalOpen]);
 
+  useEffect(() => {
+    if (!kofiPayUrl) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setKofiPayUrl(null);
+      }
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [kofiPayUrl]);
+
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -150,6 +175,38 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
     setCardPaying(false);
     cardFieldsRef.current = null;
     setInfo(null);
+  };
+
+  const closeKofiCheckout = () => {
+    setKofiPayUrl(null);
+    setKofiLoading(false);
+  };
+
+  const handleKofiCheckout = async () => {
+    if (!validateForm() || !supabaseUrl || !supabaseAnonKey) return;
+    setKofiLoading(true);
+    try {
+      const res = await fetch(`${supabaseUrl.replace(/\/$/, '')}/functions/v1/kofi-pay-url`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify(donationPayload()),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.payUrl) {
+        throw new Error(data?.error || 'Failed to start Ko-fi checkout');
+      }
+      if (typeof data.message === 'string' && data.message) {
+        setInfo(data.message);
+      }
+      setKofiPayUrl(data.payUrl as string);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ko-fi checkout is not available yet.');
+    } finally {
+      setKofiLoading(false);
+    }
   };
 
   const handlePaypalCheckout = () => {
@@ -378,6 +435,7 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
         </div>
 
         <div className="space-y-4 sm:space-y-6">
+          {SHOW_ONLINE_DONATION_CHECKOUT && (
           <div>
             <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
               Donation Amount <span className="text-gray-400 font-normal">(*)</span>
@@ -423,7 +481,10 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
               />
             </div>
           </div>
+          )}
 
+          {SHOW_ONLINE_DONATION_CHECKOUT && (
+          <>
           <div>
             <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
               Full Name
@@ -481,7 +542,11 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
               {wordsOfSupport.length}/{MAX_WORDS_OF_SUPPORT} characters
             </p>
           </div>
+          </>
+          )}
 
+          {SHOW_ONLINE_DONATION_CHECKOUT && (
+          <>
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 sm:p-4">
             <div className="flex justify-between items-center text-xs sm:text-sm mb-1">
               <span className="text-gray-600">Donation Amount:</span>
@@ -526,10 +591,27 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
 
           <p className="text-sm text-center text-gray-500">or</p>
 
+          <button
+            type="button"
+            onClick={() => void handleKofiCheckout()}
+            disabled={amount <= 0 || kofiLoading}
+            className="w-full py-3 sm:py-4 px-4 rounded-lg font-semibold text-white transition-opacity disabled:opacity-50"
+            style={{ backgroundColor: '#c95b2d' }}
+          >
+            {kofiLoading ? 'Opening Ko-fi…' : 'Continue on Ko-fi'}
+          </button>
+          <p className="text-xs text-center text-gray-500 -mt-2">
+            Use this from Kosovo if card billing has no country for you. Log in to PayPal on Ko-fi and enter the same amount.
+          </p>
+
+          <p className="text-sm text-center text-gray-500">or</p>
+          </>
+          )}
+
           <div className="rounded-lg border border-gray-200 p-3 sm:p-4">
             <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1">Bank transfer</h3>
             <p className="text-xs sm:text-sm text-gray-600 mb-3">
-              You can also donate by bank transfer. Bank gifts are added to the donors list after we receive them.
+              Donate by bank transfer. Bank gifts are added to the donors list after we receive them.
             </p>
             <div className="grid grid-cols-2 gap-2 mb-3">
               {(Object.keys(BANK_TRANSFER_OPTIONS) as Array<keyof typeof BANK_TRANSFER_OPTIONS>).map((key) => {
@@ -677,9 +759,62 @@ export function PaymentGateway({ category, onBack, onSuccess }: PaymentGatewayPr
               )}
               {paypalReady && !cardEligible && !hostedCard && (
                 <p className="text-xs text-center text-gray-500 mt-3">
-                  PayPal is not offering card for this checkout. Use PayPal, or bank transfer below.
+                  PayPal is not offering card for this checkout. Use PayPal, Ko-fi, or bank transfer.
                 </p>
               )}
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
+    {kofiPayUrl &&
+      createPortal(
+        <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/50"
+            aria-label="Close Ko-fi checkout"
+            onClick={closeKofiCheckout}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="kofi-checkout-title"
+            className="relative z-10 w-full sm:max-w-lg max-h-[92vh] overflow-hidden theme-surface rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col"
+          >
+            <div className="flex items-start justify-between gap-3 p-4 border-b border-gray-200">
+              <div>
+                <h3 id="kofi-checkout-title" className="text-base sm:text-lg font-semibold text-gray-900">
+                  Pay €{amount.toFixed(2)} on Ko-fi
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                  Enter the same amount. Log in to PayPal on Ko-fi instead of guest card, so you are not asked for a billing country.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeKofiCheckout}
+                className="shrink-0 p-1 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <iframe
+              title="Ko-fi checkout"
+              src={kofiEmbedUrl(kofiPayUrl)}
+              className="w-full flex-1 min-h-[420px] border-0 bg-white"
+            />
+            <div className="p-3 border-t border-gray-200">
+              <a
+                href={kofiPayUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full py-3 px-4 rounded-lg font-semibold text-white text-center"
+                style={{ backgroundColor: '#c95b2d' }}
+              >
+                Open Ko-fi in a new tab
+              </a>
             </div>
           </div>
         </div>,

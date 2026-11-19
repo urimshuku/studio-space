@@ -22,3 +22,12 @@ verify_jwt = false
 # Paysera server callback has no Supabase JWT
 [functions.paysera-callback]
 verify_jwt = false
+
+# Ko-fi server webhook has no Supabase JWT
+[functions.kofi-webhook]
+verify_jwt = false
+
+# Login happens before a user JWT exists. The function checks the username
+# and asks Supabase Auth to check the password.
+[functions.admin-login]
+verify_jwt = false

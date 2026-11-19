@@ -47,6 +47,7 @@ export interface Database {
           amount: number;
           is_anonymous: boolean;
           words_of_support: string | null;
+          kofi_transaction_id?: string | null;
           paypal_order_id?: string | null;
           created_at: string;
         };
@@ -57,6 +58,7 @@ export interface Database {
           amount: number;
           is_anonymous?: boolean;
           words_of_support?: string | null;
+          kofi_transaction_id?: string | null;
           paypal_order_id?: string | null;
           created_at?: string;
         };
@@ -67,6 +69,7 @@ export interface Database {
           amount?: number;
           is_anonymous?: boolean;
           words_of_support?: string | null;
+          kofi_transaction_id?: string | null;
           paypal_order_id?: string | null;
           created_at?: string;
         };

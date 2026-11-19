@@ -20,6 +20,10 @@ supabase secrets list   # names only; values are hashed
 | `PAYPAL_CLIENT_ID` | PayPal Checkout (public client id) |
 | `PAYPAL_CLIENT_SECRET` | PayPal Checkout (server only) |
 | `PAYPAL_MODE` | `live` (default) or `sandbox` |
+| `KOFI_VERIFICATION_TOKEN` | Ko-fi webhook (Kosovo PayPal workaround) |
+| `KOFI_USERNAME` | Optional; defaults to `studiospace` |
+| `ADMIN_USERNAME` | Donation hub login name. Not a secret, but checked on the server. |
+| `ADMIN_EMAIL` | Supabase Auth email for that admin user. Do not put this in the website. |
 
 ## `PUBLIC_APP_URL` (email footers)
 
@@ -35,5 +39,5 @@ The frontend only needs `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (see ro
 Redeploy affected functions so new invocations pick up env (or rely on platform refresh; redeploy is the safe default):
 
 ```bash
-supabase functions deploy book-venue join-activity paysera-pay-url paysera-callback paypal-config paypal-create-order paypal-capture-order unsubscribe-user email-preferences approve-booking track-open track-click newsletter-signup
+supabase functions deploy book-venue join-activity paysera-pay-url paysera-callback paypal-config paypal-create-order paypal-capture-order kofi-pay-url kofi-webhook unsubscribe-user email-preferences approve-booking track-open track-click newsletter-signup admin-login admin-record-donation
 ```

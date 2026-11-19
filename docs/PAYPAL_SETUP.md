@@ -44,4 +44,4 @@ The frontend loads the Client ID from **paypal-config**. You do not need a `VITE
 
 On-site card fields (no billing address) only appear if PayPal marks this account eligible for advanced cards. The new app settings page no longer has a separate Advanced Card checkbox; **JavaScript SDK v6** is the related switch.
 
-If on-site fields are not eligible, the black **Debit or Credit Card** button is shown instead. That form still uses PayPal’s country list, which does not include Kosovo. Kosovo donors should use PayPal or bank transfer.
+If on-site fields are not eligible, the black **Debit or Credit Card** button is shown instead. That form still uses PayPal’s country list, which does not include Kosovo. Kosovo donors should use the gold PayPal button, **Continue on Ko-fi**, or bank transfer. See `docs/KOFI_SETUP.md`.

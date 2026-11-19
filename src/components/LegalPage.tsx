@@ -92,7 +92,7 @@ const privacyPolicy: LegalDocument = {
     {
       heading: 'Service providers',
       paragraphs: [
-        'We use trusted service providers to run the site and related services. These include SUPABASE PTE. LTD. ("Supabase") for database and Edge Functions, RESEND C.I.C. ("Resend") for email sending and contact sync, PayPal for PayPal and card donations, Paysera Kosova SH.P.K. ("Paysera") for bank-transfer donations, and GitHub, Inc. ("GitHub") for hosting. These providers process information only as needed to provide their services to us.',
+        'We use trusted service providers to run the site and related services. These include SUPABASE PTE. LTD. ("Supabase") for database and Edge Functions, RESEND C.I.C. ("Resend") for email sending and contact sync, Paysera Kosova SH.P.K. ("Paysera") for bank-transfer donations, and GitHub, Inc. ("GitHub") for hosting. These providers process information only as needed to provide their services to us.',
         'Payment-related information may be processed for donations, for physical goods purchases, and for paid activities when they are offered. Card and bank details are handled by the payment provider. Studio Space does not store card or bank details.',
       ],
     },
@@ -145,7 +145,7 @@ const cookiePolicy: LegalDocument = {
     {
       heading: 'External services',
       paragraphs: [
-        'When you leave this site for an external service, such as Google Maps, Instagram, PayPal, or Paysera (including when paying for donations, physical goods, or paid activities), those services may use their own cookies or similar technologies under their own policies.',
+        'When you leave this site for an external service, such as Google Maps, Instagram, or Paysera (including when paying for physical goods or paid activities), those services may use their own cookies or similar technologies under their own policies.',
       ],
     },
     {
@@ -202,7 +202,7 @@ const termsOfService: LegalDocument = {
     {
       heading: 'Donations and payments',
       paragraphs: [
-        'PayPal and card donations are processed through PayPal. Bank-transfer donations use the Paysera account details shown on the donation form. Studio Space does not store card or bank details.',
+        'Donations are made by bank transfer to the Paysera account details shown on the donation form. Studio Space does not store card or bank details.',
         'Donations made through the United Human Beings Foundation (UHB) are voluntary and generally non-refundable, except where there is an obvious error such as a duplicate payment, unauthorized transaction, or similar issue.',
         `If you believe a donation or purchase was made in error, contact ${CONTACT_EMAIL} with enough information for us to identify the payment.`,
       ],
